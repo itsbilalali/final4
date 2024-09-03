@@ -35,10 +35,10 @@ jobs:
       run: |
         git cherry-pick pr-${{ env.PR_NUMBER }}
 
-    - name: Push cherry-pick branch
-      run: |
-        git checkout -b cherry-pick/pr-${{ env.PR_NUMBER }}
-        git push origin cherry-pick/pr-${{ env.PR_NUMBER }}
+    # - name: Push cherry-pick branch
+    #   run: |
+    #     git checkout -b cherry-pick/pr-${{ env.PR_NUMBER }}
+    #     # git push origin cherry-pick/pr-${{ env.PR_NUMBER }}
 
     - name: Get the list of commits
       id: get_commits
