@@ -46,8 +46,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr view --json number --jq '.number' --head pr-to-main-${{ github.event.pull_request.number }})
-          gh pr merge $PR_NUMBER --auto --squash --delete-branch
+          gh pr merge $BRANCH_NAME --auto --squash --delete-branch
 
       - name: Comment on original PR
         uses: actions/github-script@v6
