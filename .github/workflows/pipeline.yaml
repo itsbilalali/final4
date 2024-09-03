@@ -21,10 +21,25 @@ jobs:
         with:
           branch: main
 
-      - name: Push changes
+      - name: Remote View
         run: |
             git remote -v
-            git push origin main
+
+      - name: Get the latest commit SHA
+        id: get_sha
+        run: echo "PR_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: Create a new branch for PR
+        run: |
+          git checkout -b pr-to-main-${{ env.PR_SHA }}
+          git push origin pr-to-main-${{ env.PR_SHA }}
+
+      - name: Create Pull Request from the cherry-picked commit to main
+        env: 
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          gh pr create --base main --head pr-to-main-${{ env.PR_SHA }} --title "Auto Cherry-Pick: ${{ github.event.pull_request.head.ref }} to Main" --body "Automated PR to merge cherry-picked changes from ${{ github.event.pull_request.head.ref }} to main after passing QA."
+
 
 
 env:
