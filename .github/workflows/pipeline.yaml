@@ -23,7 +23,11 @@ jobs:
 
       - name: Push changes
         run: |
-          git push origin main
+            git remote set-url origin https://<PAT_TOKEN>@github.com/itsbilalali/final4.git
+            git push origin main
+        env:
+            PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
