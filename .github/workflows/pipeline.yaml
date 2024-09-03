@@ -25,6 +25,9 @@ jobs:
     - name: Fetch the pull request branch
       run: git fetch origin pull/${{ env.PR_NUMBER }}/head:pr-${{ env.PR_NUMBER }}
 
+    - name: Fetch all branches
+      run: git fetch --all
+      
     - name: Checkout the main branch
       run: git checkout main
 
