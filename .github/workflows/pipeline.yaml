@@ -34,11 +34,7 @@ jobs:
           git checkout -b pr-to-main-${{ env.PR_SHA }}
           git push origin pr-to-main-${{ env.PR_SHA }}
 
-      - name: Create Pull Request from the cherry-picked commit to main
-        env: 
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          gh pr create --base main --head pr-to-main-${{ env.PR_SHA }} --title "Auto Cherry-Pick: ${{ github.event.pull_request.head.ref }} to Main" --body "Automated PR to merge cherry-picked changes from ${{ github.event.pull_request.head.ref }} to main after passing QA."
+
 
 
 
