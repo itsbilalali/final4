@@ -1,0 +1,57 @@
+name: Auto Cherry-Pick to Main
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  cherry-pick-to-main:
+    if: github.event.label.name == 'tested'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Git
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+    - name: Get PR number
+      run: echo "PR_NUMBER=$(echo ${{ github.event.pull_request.number }})" >> $GITHUB_ENV
+
+    - name: Fetch the pull request branch
+      run: git fetch origin pull/${{ env.PR_NUMBER }}/head:pr-${{ env.PR_NUMBER }}
+
+    - name: Checkout the main branch
+      run: git checkout main
+
+    - name: Cherry-pick the PR
+      run: |
+        git cherry-pick pr-${{ env.PR_NUMBER }}
+
+    - name: Push cherry-pick branch
+      run: |
+        git checkout -b cherry-pick/pr-${{ env.PR_NUMBER }}
+        git push origin cherry-pick/pr-${{ env.PR_NUMBER }}
+
+    - name: Get the list of commits
+      id: get_commits
+      run: |
+        COMMIT_LIST=$(git log pr-${{ env.PR_NUMBER }} --pretty=format:"%h - %s" --no-merges)
+        echo "COMMIT_LIST=${COMMIT_LIST}" >> $GITHUB_ENV
+
+    # - name: Create a pull request to main
+    #   uses: peter-evans/create-pull-request@v5
+    #   with:
+    #     base: main
+    #     head: cherry-pick/pr-${{ env.PR_NUMBER }}
+    #     title: 'Cherry-pick PR #${{ env.PR_NUMBER }} to main'
+    #     body: |
+    #       This PR cherry-picks PR #${{ env.PR_NUMBER }} from dev to main.
+
+    #       ## Commits in this PR:
+    #       ${{ env.COMMIT_LIST }}
+    #     draft: false
